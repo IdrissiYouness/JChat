@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Optional;
 import com.ilyun.jchat.Message;
 
@@ -43,12 +44,17 @@ public class ChatUI extends Application {
         // Show login dialog FIRST
         Optional<String> result = showLoginDialog();
         if (!result.isPresent() || result.get().trim().isEmpty()) {
-            System.out.println("No username provided. Exiting...");
+            System.out.println("No server's ip provided. Exiting...");
             Platform.exit();
             return;
         }
 
-        username = result.get().trim();
+        username = result.get().substring(0,result.get().indexOf('@'));
+        String serverIp = result.get().substring(result.get().indexOf('@')+1, result.get().indexOf(':'));
+        String serverPort = result.get().substring(result.get().indexOf(':')+1);
+
+        System.out.println("Server IP: " + serverIp);
+        System.out.println("Server Port: " + serverPort);
         System.out.println("Username: " + username);
 
         // Create main UI
@@ -73,7 +79,7 @@ public class ChatUI extends Application {
         primaryStage.show();
 
         // NOW connect to server (after UI is ready)
-        connectToServer();
+        connectToServer(serverIp, Integer.parseInt(serverPort));
 
         // Handle window close
         primaryStage.setOnCloseRequest(e -> {
@@ -88,7 +94,7 @@ public class ChatUI extends Application {
     private Optional<String> showLoginDialog() {
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Join Chat");
-        dialog.setHeaderText("Enter your username to join the chat");
+        dialog.setHeaderText("Enter your username and server's ip@ to join the chat");
 
         ButtonType loginButtonType = new ButtonType("Connect", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
@@ -97,12 +103,17 @@ public class ChatUI extends Application {
         usernameField.setPromptText("Username");
         usernameField.setPrefWidth(250);
 
+        TextField serverField = new TextField();
+        serverField.setPromptText("Ex: 192.168.100.67:8080");
+        serverField.setPrefWidth(250);
+
         VBox content = new VBox(10);
         content.setPadding(new Insets(20));
         content.getChildren().addAll(
                 new Label("Username:"),
                 usernameField,
-                new Label("Server: localhost:5000")
+                new Label("Server:"),
+                serverField
         );
         dialog.getDialogPane().setContent(content);
 
@@ -112,13 +123,23 @@ public class ChatUI extends Application {
         Button connectButton = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
         connectButton.setDisable(true);
 
-        usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
+        serverField.textProperty().addListener((observable, oldValue, newValue) -> {
             connectButton.setDisable(newValue.trim().isEmpty());
         });
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                return usernameField.getText().trim();
+                String server = serverField.getText().trim();
+                String serverIP = server.substring(0, server.indexOf(':'));
+                String serverPort = server.substring(server.indexOf(':') + 1);
+                String username = usernameField.getText().trim();
+
+                int randomId = (int) (Math.random() * 1000000);
+
+                username = username.isEmpty() ? "Anonymous"+randomId : username;
+
+
+                return username + "@" + serverIP + ":" + serverPort;
             }
             return null;
         });
@@ -204,17 +225,17 @@ public class ChatUI extends Application {
         return panel;
     }
 
-    private void connectToServer() {
-        String host = "localhost";
-        int port = 5000;
+    private void connectToServer(String serverIp, int serverPort) {
+//        String host = "localhost";
+//        int serverPort = 5000;
 
-        System.out.println("Attempting to connect to " + host + ":" + port + " as " + username);
+        System.out.println("Attempting to connect to " + serverIp + ":" + serverPort + " as " + username);
 
         // Initialize client
         client = new ChatClient();
 
         // Try to connect
-        boolean success = client.connect(host, port, username, this::handleMessage);
+        boolean success = client.connect(serverIp, serverPort, username, this::handleMessage);
 
         if (success) {
             System.out.println("Connected successfully!");
@@ -226,7 +247,7 @@ public class ChatUI extends Application {
             System.err.println("Connection failed!");
             updateStatus("Connection failed");
             showAlert("Connection Error",
-                    "Could not connect to server at " + host + ":" + port +
+                    "Could not connect to server at " + serverIp + ":" + serverPort +
                             "\n\nMake sure the server is running first!\n\n" +
                             "To start server:\njava -cp bin com.ilyun.jchat.server.ChatServer");
         }

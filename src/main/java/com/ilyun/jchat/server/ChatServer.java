@@ -9,12 +9,24 @@ import com.ilyun.jchat.Message;
 
 public class ChatServer {
     private static final int PORT = 5000;
+    private static final int BACKLOG = 50;
+    private static final String INET_ADDRESS = "192.168.11.113";
+    private static final InetAddress ADDRESS;
+
+    static {
+        try {
+            ADDRESS = InetAddress.getByName(INET_ADDRESS);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         System.out.println("=== Chat Server Started on Port " + PORT + " ===\n");
 
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT, BACKLOG, ADDRESS)) {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(new ClientHandler(clientSocket)).start();
