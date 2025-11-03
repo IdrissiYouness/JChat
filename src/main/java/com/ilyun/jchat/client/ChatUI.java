@@ -5,6 +5,8 @@ package com.ilyun.jchat.client;
 // ============================================
 
 
+import atlantafx.base.theme.PrimerDark;
+import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -35,6 +37,7 @@ public class ChatUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
         primaryStage.setTitle("Simple Chat App");
 
         // Show login dialog FIRST

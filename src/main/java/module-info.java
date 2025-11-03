@@ -9,6 +9,7 @@ module com.ilyun.jchat {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires atlantafx.base;
 
     opens com.ilyun.jchat to javafx.fxml;
     exports com.ilyun.jchat.client;
