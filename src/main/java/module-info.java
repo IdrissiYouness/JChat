@@ -10,6 +10,7 @@ module com.ilyun.jchat {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires atlantafx.base;
+    requires java.dotenv;
 
     opens com.ilyun.jchat to javafx.fxml;
     exports com.ilyun.jchat.client;

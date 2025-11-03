@@ -1,6 +1,6 @@
 package com.ilyun.jchat.server;
 
-
+import io.github.cdimascio.dotenv.Dotenv;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -8,9 +8,10 @@ import java.util.concurrent.*;
 import com.ilyun.jchat.Message;
 
 public class ChatServer {
-    private static final int PORT = 5000;
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final int PORT = Integer.parseInt(dotenv.get("_PORT"));
     private static final int BACKLOG = 50;
-    private static final String INET_ADDRESS = "192.168.11.113";
+    private static final String INET_ADDRESS = dotenv.get("_SERVER_IP");
     private static final InetAddress ADDRESS;
 
     static {
