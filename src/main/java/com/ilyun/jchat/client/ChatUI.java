@@ -5,6 +5,8 @@ package com.ilyun.jchat.client;
 // ============================================
 
 
+import atlantafx.base.theme.NordDark;
+import atlantafx.base.theme.NordLight;
 import atlantafx.base.theme.PrimerDark;
 import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
@@ -30,6 +32,7 @@ public class ChatUI extends Application {
     private TextField inputField;
     private ListView<String> userList;
     private Label statusLabel;
+    private HBox header;
     private String username;
 
     public static void main(String[] args) {
@@ -38,7 +41,7 @@ public class ChatUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new NordLight().getUserAgentStylesheet());
         primaryStage.setTitle("Simple Chat App");
 
         // Show login dialog FIRST
@@ -170,7 +173,7 @@ public class ChatUI extends Application {
         panel.setStyle("-fx-background-color: white;");
 
         // Header
-        HBox header = new HBox(10);
+        header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(5));
         header.setStyle("-fx-background-color: #25D366; -fx-background-radius: 5;");
@@ -239,13 +242,13 @@ public class ChatUI extends Application {
 
         if (success) {
             System.out.println("Connected successfully!");
-            updateStatus("Connected");
+            updateStatus("Connected",false);
             inputField.setDisable(false);
             ((Button) inputField.getParent().getChildrenUnmodifiable().get(1)).setDisable(false);
             displaySystemMessage("Connected to chat server");
         } else {
             System.err.println("Connection failed!");
-            updateStatus("Connection failed");
+            updateStatus("Connection failed",true);
             showAlert("Connection Error",
                     "Could not connect to server at " + serverIp + ":" + serverPort +
                             "\n\nMake sure the server is running first!\n\n" +
@@ -272,7 +275,7 @@ public class ChatUI extends Application {
                 break;
 
             case DISCONNECT:
-                updateStatus("Disconnected");
+                updateStatus("Disconnected",true);
                 inputField.setDisable(true);
                 ((Button) inputField.getParent().getChildrenUnmodifiable().get(1)).setDisable(true);
                 showAlert("Disconnected", message.getContent());
@@ -315,8 +318,11 @@ public class ChatUI extends Application {
         }
     }
 
-    private void updateStatus(String status) {
+    private void updateStatus(String status,boolean failed) {
         statusLabel.setText(status);
+        if (failed) {
+            header.setStyle("-fx-background-color: #f81111; -fx-background-radius: 5;");
+        }
     }
 
     private void showAlert(String title, String message) {
