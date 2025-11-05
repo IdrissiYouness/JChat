@@ -26,7 +26,7 @@ public class Message implements Serializable {
         this.timestamp = System.currentTimeMillis();
     }
 
-    // Getters
+
     public Type getType() { return type; }
     public String getSender() { return sender; }
     public String getContent() { return content; }

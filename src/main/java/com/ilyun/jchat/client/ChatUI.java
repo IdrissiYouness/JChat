@@ -1,14 +1,6 @@
 package com.ilyun.jchat.client;
 
-// ============================================
-// ChatUI.java - FIXED VERSION
-// ============================================
-
-
-import atlantafx.base.theme.NordDark;
 import atlantafx.base.theme.NordLight;
-import atlantafx.base.theme.PrimerDark;
-import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -22,7 +14,6 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Optional;
 import com.ilyun.jchat.Message;
 
@@ -229,9 +220,6 @@ public class ChatUI extends Application {
     }
 
     private void connectToServer(String serverIp, int serverPort) {
-//        String host = "localhost";
-//        int serverPort = 5000;
-
         System.out.println("Attempting to connect to " + serverIp + ":" + serverPort + " as " + username);
 
         // Initialize client
@@ -333,49 +321,3 @@ public class ChatUI extends Application {
         alert.showAndWait();
     }
 }
-
-
-// ============================================
-// DEBUGGING CHECKLIST
-// ============================================
-/*
-
-IF YOU SEE "Connection lost: null":
-
-1. CHECK SERVER IS RUNNING:
-   - Open terminal/command prompt
-   - Run: java -cp bin com.ilyun.jchat.server.ChatServer
-   - You should see: "=== Chat Server Started on Port 5000 ==="
-
-2. CHECK PORT 5000 IS FREE:
-   - Windows: netstat -ano | findstr :5000
-   - Mac/Linux: lsof -i :5000
-   - If something is using port 5000, change it in both ChatServer and ChatUI
-
-3. CHECK FIREWALL:
-   - Make sure firewall allows Java to use port 5000
-
-4. VERIFY COMPILATION:
-   - Make sure Message.java is compiled in both server and client
-   - Check bin folder has all .class files
-
-5. RUN ORDER:
-   - ALWAYS start server FIRST
-   - THEN start client(s)
-
-CONSOLE OUTPUT YOU SHOULD SEE:
-
-SERVER SIDE:
-=== Chat Server Started on Port 5000 ===
-
-✓ Alice connected. Total users: 1
-Alice: Hello!
-✓ Bob connected. Total users: 2
-Bob: Hi Alice!
-
-CLIENT SIDE:
-Username: Alice
-Attempting to connect to localhost:5000 as Alice
-Connected successfully!
-
-*/

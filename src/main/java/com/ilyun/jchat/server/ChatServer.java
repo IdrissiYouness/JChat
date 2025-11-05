@@ -89,9 +89,6 @@ public class ChatServer {
     }
 
 
-    // ============================================
-    // Inner Class: ClientHandler
-    // ============================================
     static class ClientHandler implements Runnable {
         private Socket socket;
         private ObjectOutputStream out;
